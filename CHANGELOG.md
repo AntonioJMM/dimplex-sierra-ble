@@ -17,7 +17,7 @@ All notable changes to this project are documented here. The format follows [Kee
 - Verified sound switch using DP108.
 - Delayed second read-back for the sound datapoint.
 - English and Spanish public documentation.
-- HACS metadata, CI, security policy, contribution guide, and third-party notices.
+- HACS metadata, original brand icon, CI, security policy, contribution guide, and third-party notices.
 
 ### Changed
 
