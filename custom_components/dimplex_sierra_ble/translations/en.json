@@ -1,0 +1,19 @@
+{
+  "title": "Dimplex Sierra BLE",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Add Dimplex Sierra BLE",
+        "description": "Select the fireplace discovered over Bluetooth.",
+        "data": {
+          "address": "Fireplace"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "The fireplace is already configured.",
+      "not_found": "No Dimplex Sierra Bluetooth advertisement was found.",
+      "not_sierra": "The discovered Bluetooth device does not match the Dimplex Sierra."
+    }
+  }
+}

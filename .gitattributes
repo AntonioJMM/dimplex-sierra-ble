@@ -1,0 +1,9 @@
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+
+# Preserve the pinned third-party source byte for byte.
+custom_components/dimplex_sierra_ble/tuya_ble/*.py -whitespace

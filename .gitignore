@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Editors and operating systems
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Home Assistant runtime and private data
+.storage/
+.homeassistant/
+home-assistant_v2.db*
+zigbee.db*
+*.log
+*.log.*
+secrets.yaml
+known_devices.yaml
+
+# Backups and archives
+*.tar
+*.tar.gz
+*.zip
+*.bak
+*.backup
+*before-*
+
+# Credentials and environment
+.env
+.env.*
+*.pem
+*.key
+*.token
+
+# Local reports
+reports/
+diagnostics/
+screenshots-private/

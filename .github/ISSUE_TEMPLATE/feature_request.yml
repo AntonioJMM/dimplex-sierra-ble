@@ -1,0 +1,35 @@
+name: Feature request
+description: Suggest a safe, evidence-based improvement
+title: "[Feature]: "
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        New datapoint mappings require reversible physical evidence. Do not post local keys, UUIDs, addresses, device IDs, serial numbers, or unredacted captures.
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: Describe the user-visible behavior you want.
+    validations:
+      required: true
+  - type: input
+    id: hardware
+    attributes:
+      label: Model and Tuya product ID
+      placeholder: Sierra 48 / 0fsaqmtu
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Protocol or physical evidence
+      description: Describe baseline, isolated action, changed datapoint, inverse action, and read-back confirmation. Redact all device identifiers.
+  - type: textarea
+    id: safety
+    attributes:
+      label: Safety and rollback
+      description: Explain heater state, risks, and how the change can be reverted.
+    validations:
+      required: true

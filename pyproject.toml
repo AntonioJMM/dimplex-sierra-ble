@@ -1,0 +1,12 @@
+[tool.ruff]
+target-version = "py313"
+line-length = 88
+extend-exclude = ["custom_components/dimplex_sierra_ble/tuya_ble"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "ASYNC"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"

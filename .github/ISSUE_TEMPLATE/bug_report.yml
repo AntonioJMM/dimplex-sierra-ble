@@ -1,0 +1,70 @@
+name: Bug report
+description: Report a reproducible problem with Dimplex Sierra BLE
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not post local keys, UUIDs, Bluetooth/MAC addresses, Tuya IDs, serial numbers, tokens, account data, or unredacted logs.
+  - type: input
+    id: version
+    attributes:
+      label: Integration version
+      placeholder: 0.3.0
+    validations:
+      required: true
+  - type: input
+    id: ha_version
+    attributes:
+      label: Home Assistant version
+      placeholder: 2026.10.2
+    validations:
+      required: true
+  - type: input
+    id: model
+    attributes:
+      label: Fireplace model and Tuya product ID
+      description: Product-level identifiers only; never post a device ID or serial number.
+      placeholder: Sierra 48 / 0fsaqmtu
+    validations:
+      required: true
+  - type: dropdown
+    id: connection
+    attributes:
+      label: Bluetooth path
+      options:
+        - Local adapter passed directly to Home Assistant
+        - Bluetooth proxy
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What happened, what did you expect, and how can it be reproduced?
+    validations:
+      required: true
+  - type: textarea
+    id: safety
+    attributes:
+      label: Heater state and safety observations
+      description: State whether heat was off, on, or unknown. Stop testing if the physical state is unknown.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Minimal redacted logs
+      description: Review every line manually. Do not enable broad debug logging.
+      render: text
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Privacy confirmation
+      options:
+        - label: I removed all credentials and device/account identifiers.
+          required: true
+        - label: I reproduced this on the latest tagged release.
+          required: true

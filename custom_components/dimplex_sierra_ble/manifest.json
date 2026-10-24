@@ -1,0 +1,18 @@
+{
+  "domain": "dimplex_sierra_ble",
+  "name": "Dimplex Sierra BLE",
+  "bluetooth": [
+    {
+      "local_name": "TY",
+      "service_uuid": "0000fd50-0000-1000-8000-00805f9b34fb"
+    }
+  ],
+  "codeowners": ["@AntonioJMM"],
+  "config_flow": true,
+  "dependencies": ["bluetooth", "tuya"],
+  "documentation": "https://github.com/AntonioJMM/dimplex-sierra-ble",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/AntonioJMM/dimplex-sierra-ble/issues",
+  "requirements": ["pycryptodome==3.24.1"],
+  "version": "0.3.0"
+}

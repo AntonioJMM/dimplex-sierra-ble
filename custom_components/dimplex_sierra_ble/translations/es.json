@@ -1,0 +1,19 @@
+{
+  "title": "Dimplex Sierra BLE",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Añadir Dimplex Sierra BLE",
+        "description": "Selecciona la chimenea detectada por Bluetooth.",
+        "data": {
+          "address": "Chimenea"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "La chimenea ya está configurada.",
+      "not_found": "No se encontró una Dimplex Sierra anunciando por Bluetooth.",
+      "not_sierra": "El dispositivo Bluetooth descubierto no coincide con la Dimplex Sierra."
+    }
+  }
+}
