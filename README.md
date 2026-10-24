@@ -51,8 +51,6 @@ Commands are local after setup, but the integration currently obtains the BLE UU
 
 ### HACS custom repository
 
-After this repository has been published:
-
 1. Open HACS.
 2. Select **Integrations**.
 3. Open the menu and choose **Custom repositories**.

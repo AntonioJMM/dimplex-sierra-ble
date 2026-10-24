@@ -46,8 +46,6 @@ Las órdenes son locales, pero la integración obtiene en memoria el UUID BLE y 
 
 ### Repositorio personalizado de HACS
 
-Cuando el repositorio sea público:
-
 1. Abre HACS y entra en **Integraciones**.
 2. Abre el menú y selecciona **Repositorios personalizados**.
 3. Añade `https://github.com/AntonioJMM/dimplex-sierra-ble` con categoría **Integración**.
