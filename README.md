@@ -26,7 +26,8 @@ Local Bluetooth control for selected Dimplex Sierra electric fireplaces using Tu
 - Celsius/Fahrenheit display-state diagnostic.
 - Every write is followed by a read-back verification.
 - BLE is disconnected after each operation.
-- Tuya credentials are reused in memory and are never copied into this integration's config entry.
+- Own credential-entry and reauthentication flows, independent of the official Tuya integration.
+- Explicit Bluetooth discovery confirmation and automatic retries for temporary connection failures.
 
 ## Confirmed hardware
 
@@ -34,18 +35,20 @@ Local Bluetooth control for selected Dimplex Sierra electric fireplaces using Tu
 |---|---|---|---|
 | Dimplex Sierra 48 | `SIL48` / `X-SIL48` | `0fsaqmtu` | Physically tested |
 
-The integration deliberately rejects unsupported product IDs during credential lookup. A Bluetooth advertisement named `TY` is not sufficient proof of compatibility because many Tuya BLE products use that name.
+The integration deliberately rejects unsupported product IDs during credential entry. A Bluetooth advertisement named `TY` is not sufficient proof of compatibility because many Tuya BLE products use that name.
 
 ## Requirements
 
 - Home Assistant with a working Bluetooth integration and a connectable Bluetooth adapter or proxy.
 - The fireplace must be in Bluetooth range and advertising.
-- The official Home Assistant **Tuya** integration must already contain the fireplace and expose its BLE credentials in memory.
+- Your fireplace's **Tuya BLE UUID**, **device ID**, **16-character local key**, and **product ID** (`0fsaqmtu`).
 - Home Assistant `2026.10.0` or newer for the currently tested release line.
 
-### Important Tuya dependency
+### Obtaining credentials
 
-Commands are local after setup, but the integration currently obtains the BLE UUID and local key from the official Tuya integration's runtime data. This is an internal Home Assistant/Tuya interface and can change in a future Home Assistant release. No key is written to this integration's files or config entry.
+Obtain these values through your own authorized Tuya account, for example through the [Tuya developer platform](https://platform.tuya.com/). Availability depends on your account, region and API permissions. The BLE UUID is not the Bluetooth/MAC address. This integration does not create a cloud project, extract credentials from other integrations or log into Tuya on your behalf. If you cannot obtain all four values, setup cannot be completed; do not guess them or reset the fireplace just to try.
+
+The official Home Assistant Tuya integration is **not required**. Credentials are entered directly in this integration's config flow and stored in its Home Assistant config entry. Subsequent control uses local BLE.
 
 ## Installation
 
@@ -72,11 +75,17 @@ Do not install from an unreviewed branch on a production Home Assistant instance
 
 ## Setup
 
-1. Configure Home Assistant Bluetooth.
-2. Configure the official Tuya integration and confirm that the fireplace exists there.
-3. Power the fireplace so it advertises over BLE.
-4. Add **Dimplex Sierra BLE** from **Settings → Devices & services**.
-5. Select the discovered fireplace.
+1. Configure Home Assistant Bluetooth and obtain the device credentials listed above.
+2. Keep the fireplace powered, advertising and within Bluetooth range; keep heat off during initial checks.
+3. Add **Dimplex Sierra BLE** from **Settings → Devices & services** and select your fireplace. For automatic Bluetooth discovery, explicitly confirm that the generic Tuya advertisement belongs to your Sierra 48 first.
+4. Enter the Tuya BLE UUID, device ID, local key and supported product ID. The form validates their format; it does not authenticate over Bluetooth. Initial setup then attempts BLE authentication and a read, without a control write.
+5. Temporary advertisement/connection failures are retried automatically by Home Assistant. If you need to correct credentials, choose **Reconfigure** in this integration's menu and enter all four fields again; the existing entry and entities are retained.
+
+### Upgrading from 0.3.x
+
+Back up Home Assistant before updating. The existing entry is migrated without changing its ID or entity unique IDs. Since older entries did not store credentials, Home Assistant requests reauthentication: enter the same fireplace's credentials through this integration's form. Do not remove the entry or re-pair the fireplace. Until credentials are supplied, its entities may be unavailable.
+
+The BLE protocol/control path was physically validated in 0.3.0. The new 0.4.0 credential and migration paths have automated tests but have not yet been physically revalidated. To revert safely, restore the pre-update backup; older versions cannot read the version-2 config entry.
 
 No Tuya password, UUID, local key, Bluetooth address, or device ID should be posted in an issue.
 
@@ -104,7 +113,7 @@ DP103 is intentionally exposed only as a diagnostic raw value. It has produced v
 
 ## Privacy and logging
 
-The integration does not intentionally log or persist the Tuya local key, Tuya UUID, Bluetooth address, or device ID. The bundled transport logger is suppressed because upstream debug messages may contain device identifiers.
+The Tuya local key, BLE UUID, device ID and Bluetooth address are persisted in this integration's Home Assistant config entry. Treat Home Assistant's configuration directory and backups as sensitive: password fields mask input but do not encrypt storage. The integration does not intentionally log credentials; the bundled transport logger is suppressed because upstream debug messages may contain device identifiers.
 
 Before opening an issue:
 
@@ -118,7 +127,7 @@ See [SECURITY.md](SECURITY.md).
 
 - Only product ID `0fsaqmtu` is supported.
 - Only one physical unit has been validated so far.
-- Credential retrieval depends on private runtime details of the official Tuya integration.
+- Users must obtain their own BLE credentials through an authorized Tuya account; retrieval is not automated.
 - DP103 is not understood.
 - Fahrenheit behavior has not received the same physical validation as Celsius.
 - Bluetooth discovery uses common Tuya advertisement characteristics; final compatibility is enforced during setup, not by the local name alone.
@@ -126,9 +135,11 @@ See [SECURITY.md](SECURITY.md).
 ## Development
 
 ```bash
-python3.14 -m compileall custom_components/dimplex_sierra_ble
-ruff check custom_components/dimplex_sierra_ble \
-  --exclude custom_components/dimplex_sierra_ble/tuya_ble
+python3.14 -m venv .venv
+.venv/bin/pip install -r requirements-test.txt ruff==0.17.2
+.venv/bin/python -m pytest -q
+.venv/bin/python -m compileall -q custom_components/dimplex_sierra_ble
+.venv/bin/ruff check custom_components/dimplex_sierra_ble tests
 ```
 
 Pull requests should include tests or reproducible protocol evidence for every new datapoint. See [CONTRIBUTING.md](CONTRIBUTING.md).

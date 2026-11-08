@@ -12,17 +12,18 @@ Thank you for helping improve Dimplex Sierra BLE.
 
 ## Development setup
 
-Use Python 3.13 or newer.
+Use Python 3.14 for the pinned Home Assistant test environment. CI also checks integration syntax with Python 3.13.
 
 ```bash
 python3.14 -m venv .venv
 . .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install ruff==0.17.2
-ruff check custom_components/dimplex_sierra_ble \
-  --exclude custom_components/dimplex_sierra_ble/tuya_ble
-python -m compileall custom_components/dimplex_sierra_ble
+python -m pip install -r requirements-test.txt ruff==0.17.2
+python -m pytest -q
+ruff check custom_components/dimplex_sierra_ble tests
+python -m compileall -q custom_components/dimplex_sierra_ble tests
 ```
+
+Tests use synthetic credentials and mock OS Bluetooth setup, advertisements and transport calls. They must not authenticate to a real Tuya account or contact a physical fireplace.
 
 The vendored `tuya_ble` directory is pinned third-party code. Do not reformat or modify it casually. Any update must:
 

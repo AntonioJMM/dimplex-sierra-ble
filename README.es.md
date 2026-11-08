@@ -21,7 +21,8 @@ Control Bluetooth local para determinadas chimeneas eléctricas Dimplex Sierra q
 - Diagnóstico del bloqueo físico del calefactor.
 - Verificación por lectura posterior de cada escritura.
 - Desconexión BLE después de cada operación.
-- Reutilización en memoria de las credenciales Tuya, sin copiarlas a la entrada de configuración.
+- Formularios propios de credenciales y reautenticación, independientes de la integración oficial Tuya.
+- Confirmación explícita del descubrimiento Bluetooth y reintentos automáticos ante fallos temporales.
 
 ## Hardware confirmado
 
@@ -35,12 +36,14 @@ El nombre Bluetooth `TY` no demuestra compatibilidad: muchos productos Tuya BLE 
 
 - Home Assistant con la integración Bluetooth funcionando.
 - Adaptador o proxy Bluetooth conectable y con cobertura de la chimenea.
-- Integración oficial **Tuya** configurada y con la chimenea presente.
+- **UUID BLE de Tuya**, **ID de dispositivo**, **clave local de 16 caracteres** y **product ID** (`0fsaqmtu`) de tu chimenea.
 - Home Assistant `2026.10.0` o posterior para la rama actualmente probada.
 
-### Dependencia importante de Tuya
+### Obtención de credenciales
 
-Las órdenes son locales, pero la integración obtiene en memoria el UUID BLE y la clave local desde los datos de ejecución de la integración oficial Tuya. Es una interfaz interna que podría cambiar en futuras versiones de Home Assistant. La clave no se escribe en los archivos ni en la entrada de configuración de esta integración.
+Obtén los datos desde tu propia cuenta Tuya autorizada, por ejemplo mediante la [plataforma de desarrollo Tuya](https://platform.tuya.com/). Su disponibilidad depende de la cuenta, región y permisos de API. El UUID BLE no es la dirección Bluetooth/MAC. Esta integración no crea un proyecto cloud, extrae credenciales de otras integraciones ni inicia sesión en Tuya por ti. Sin los cuatro datos no puede completarse la configuración; no los adivines ni restablezcas la chimenea para probar.
+
+La integración oficial Tuya de Home Assistant **no es necesaria**. Introduces los datos en el formulario propio y se guardan en la entrada de configuración de esta integración. El control posterior usa BLE local.
 
 ## Instalación
 
@@ -64,10 +67,17 @@ El proyecto todavía no forma parte de la lista predeterminada de HACS.
 
 ## Configuración
 
-1. Configura Bluetooth en Home Assistant.
-2. Configura la integración oficial Tuya y confirma que contiene la chimenea.
-3. Enciende la chimenea para que anuncie por BLE.
-4. Añade **Dimplex Sierra BLE** y selecciona el dispositivo descubierto.
+1. Configura Bluetooth y obtén las credenciales indicadas anteriormente.
+2. Mantén la chimenea alimentada, anunciándose y dentro de cobertura; conserva la calefacción apagada durante las comprobaciones iniciales.
+3. Añade **Dimplex Sierra BLE** y selecciona tu chimenea. Si aparece por descubrimiento automático, confirma primero que el anuncio genérico de Tuya corresponde a tu Sierra 48.
+4. Introduce UUID BLE, ID de dispositivo, clave local y product ID. El formulario comprueba el formato, no la autenticación Bluetooth. La configuración inicial intenta después autenticarse y leer, sin escribir órdenes de control.
+5. Home Assistant reintentará automáticamente los fallos temporales de anuncio o conexión. Para corregir credenciales, elige **Reconfigurar** en el menú de esta integración e introduce de nuevo los cuatro datos; se conservarán la entrada y sus entidades.
+
+### Actualización desde 0.3.x
+
+Haz un backup de Home Assistant antes de actualizar. Se migra la entrada existente sin cambiar su ID ni los identificadores únicos de las entidades. Como las entradas antiguas no guardaban credenciales, Home Assistant solicitará reautenticación: introduce los datos de la misma chimenea en el formulario propio. No elimines la entrada ni vuelvas a vincular la chimenea. Sus entidades pueden estar no disponibles hasta aportar los datos.
+
+El protocolo BLE y los controles se validaron físicamente en 0.3.0. Los nuevos flujos de credenciales y migración de 0.4.0 tienen pruebas automatizadas, pero todavía no se han revalidado físicamente. Para revertir con seguridad, restaura el backup anterior: las versiones antiguas no pueden leer la entrada de configuración de versión 2.
 
 No publiques en una incidencia contraseñas, claves locales, UUID, direcciones Bluetooth, identificadores Tuya ni números de serie.
 
@@ -95,7 +105,7 @@ DP103 se muestra únicamente como dato diagnóstico. Ha producido valores incomp
 
 ## Privacidad y logs
 
-La integración no pretende registrar ni guardar la clave local Tuya, UUID Tuya, dirección Bluetooth o ID del dispositivo. El logger del transporte incluido permanece silenciado porque el DEBUG del upstream puede contener identificadores.
+La clave local, UUID BLE, ID de dispositivo y dirección Bluetooth se guardan en la entrada de configuración de Home Assistant de esta integración. Protege el directorio de configuración y los backups: los campos de contraseña ocultan el texto, pero no cifran el almacenamiento. La integración no pretende escribir credenciales en los logs; el logger del transporte incluido permanece silenciado porque el DEBUG del upstream puede contener identificadores.
 
 Antes de abrir una incidencia, elimina cualquier dato identificativo y revisa manualmente capturas y diagnósticos. Consulta [SECURITY.md](SECURITY.md).
 
@@ -103,7 +113,7 @@ Antes de abrir una incidencia, elimina cualquier dato identificativo y revisa ma
 
 - Solo se admite el product ID `0fsaqmtu`.
 - Solo se ha validado una unidad física.
-- La obtención de credenciales depende de detalles internos de Tuya.
+- Debes obtener tus credenciales BLE mediante una cuenta Tuya autorizada; no hay extracción automática.
 - DP103 sigue sin identificar.
 - Fahrenheit no se ha validado físicamente al mismo nivel que Celsius.
 

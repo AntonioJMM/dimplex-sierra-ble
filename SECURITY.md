@@ -21,7 +21,11 @@ If private reporting is unavailable, contact the repository owner through a priv
 
 ## Credential handling design
 
-Dimplex Sierra BLE reads the required BLE credentials from the official Tuya integration's in-memory runtime data. It does not intentionally copy them into its own config entry, diagnostics, or log messages.
+Dimplex Sierra BLE accepts the BLE UUID, local key, device ID and product ID directly from the user through its own config flow. It does not read another integration's config entries, runtime clients, device managers or credentials. The official Tuya integration is not a dependency.
+
+The credentials and Bluetooth address are stored in this integration's Home Assistant config entry. Password selectors conceal form input, not the stored values. Home Assistant's configuration directory and backups therefore contain sensitive material and must be protected. Legacy entries request user-provided credentials; migration does not copy credentials from Tuya.
+
+Validation errors use fixed messages without credential values. Credentials are not intentionally included in integration logs or diagnostics. Bluetooth discovery requires explicit confirmation before credential entry because its Tuya advertisement signature is not model-specific.
 
 The bundled transport logger is forced to `CRITICAL` because upstream debug and error messages can contain device identifiers. Contributors must preserve this protection unless every affected message has been audited and redacted.
 

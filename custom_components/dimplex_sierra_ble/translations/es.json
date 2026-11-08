@@ -4,16 +4,52 @@
     "step": {
       "user": {
         "title": "Añadir Dimplex Sierra BLE",
-        "description": "Selecciona la chimenea detectada por Bluetooth.",
+        "description": "Selecciona la chimenea cercana. El descubrimiento usa anuncios genéricos de Tuya y no identifica el modelo; selecciona únicamente tu Dimplex Sierra 48.",
+        "data": {"address": "Chimenea"}
+      },
+      "bluetooth_confirm": {
+        "title": "Confirma tu Dimplex Sierra 48",
+        "description": "Se ha descubierto un dispositivo Tuya BLE cercano. Muchos productos diferentes se anuncian como TY con FD50. Continúa solo si es tu Dimplex Sierra 48 (SIL48/X-SIL48). No se añadirá ninguna entrada hasta que aportes las credenciales de esta chimenea."
+      },
+      "credentials": {
+        "title": "Introduce las credenciales BLE de la chimenea",
+        "description": "Introduce los datos de tu dispositivo, obtenidos a través de tu cuenta Tuya. Solo se admite el product ID 0fsaqmtu. Aquí se comprueba el formato; la autenticación BLE ocurre durante la configuración. Los valores se guardan en la entrada de Home Assistant de esta integración. No se lee nada de la integración oficial Tuya. No compartas estos datos en incidencias o capturas.",
         "data": {
-          "address": "Chimenea"
+          "product_id": "Product ID de Tuya",
+          "uuid": "UUID BLE de Tuya",
+          "device_id": "ID de dispositivo Tuya",
+          "local_key": "Clave local Tuya"
+        }
+      },
+      "reconfigure": {
+        "title": "Sustituye las credenciales BLE de la chimenea",
+        "description": "Introduce los cuatro datos de esta misma chimenea. Los secretos guardados nunca se precargan. Se conservarán la entrada y las entidades; tras comprobar el formato, se intentará de nuevo la configuración BLE.",
+        "data": {
+          "product_id": "Product ID de Tuya",
+          "uuid": "UUID BLE de Tuya",
+          "device_id": "ID de dispositivo Tuya",
+          "local_key": "Clave local Tuya"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Actualiza las credenciales BLE de la chimenea",
+        "description": "Esta integración ahora requiere que aportes sus credenciales directamente. Introduce los datos de esta chimenea; se conservarán la entrada y sus entidades. UUID, ID de dispositivo y clave local son privados. Se guardan en la entrada de Home Assistant de esta integración y no se importan de otra integración.",
+        "data": {
+          "product_id": "Product ID de Tuya",
+          "uuid": "UUID BLE de Tuya",
+          "device_id": "ID de dispositivo Tuya",
+          "local_key": "Clave local Tuya"
         }
       }
     },
+    "error": {
+      "invalid_credentials": "Introduce todos los campos tal como los proporciona Tuya. La clave local debe tener 16 caracteres ASCII y el UUID junto al ID de dispositivo deben caber en el formato de vinculación BLE.",
+      "not_supported": "Solo se admite el product ID de Dimplex Sierra 0fsaqmtu. No continúes con otro dispositivo Tuya."
+    },
     "abort": {
       "already_configured": "La chimenea ya está configurada.",
-      "not_found": "No se encontró una Dimplex Sierra anunciando por Bluetooth.",
-      "not_sierra": "El dispositivo Bluetooth descubierto no coincide con la Dimplex Sierra."
+      "not_found": "No se encontró un anuncio Bluetooth compatible. Mantén la chimenea alimentada y dentro de la cobertura Bluetooth.",
+      "not_sierra": "El dispositivo descubierto no coincide con el formato de anuncio Tuya admitido."
     }
   }
 }

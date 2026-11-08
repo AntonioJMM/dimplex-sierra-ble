@@ -9,11 +9,11 @@
   ],
   "codeowners": ["@AntonioJMM"],
   "config_flow": true,
-  "dependencies": ["bluetooth", "tuya"],
+  "dependencies": ["bluetooth"],
   "documentation": "https://github.com/AntonioJMM/dimplex-sierra-ble",
   "integration_type": "device",
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/AntonioJMM/dimplex-sierra-ble/issues",
   "requirements": ["pycryptodome==3.24.1"],
-  "version": "0.3.0"
+  "version": "0.4.0"
 }

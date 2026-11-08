@@ -1,0 +1,6 @@
+# The test plugin pins Home Assistant 2026.10.4 and its pytest tooling.
+pytest-homeassistant-custom-component==0.13.375
+pycryptodome==3.24.1
+# Optional Bluetooth/USB component requirements used by the HA fixtures.
+aiousbwatcher==1.1.2
+serialx==1.11.0

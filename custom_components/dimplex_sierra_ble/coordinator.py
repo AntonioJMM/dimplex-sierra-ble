@@ -13,10 +13,15 @@ from homeassistant.components import bluetooth
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_ADDRESS
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import HomeAssistantError
+from homeassistant.exceptions import (
+    ConfigEntryAuthFailed,
+    ConfigEntryNotReady,
+    HomeAssistantError,
+)
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .const import PRODUCT_ID, PRODUCT_NAME
+from .const import PRODUCT_NAME
+from .credentials import InvalidCredentials, credentials_from_data
 from .tuya_ble import (
     AbstaractTuyaBLEDeviceManager,
     TuyaBLEDataPointType,
@@ -46,33 +51,14 @@ class _CredentialsManager(AbstaractTuyaBLEDeviceManager):
         return self._credentials
 
 
-def _get_tuya_credentials(hass: HomeAssistant) -> TuyaBLEDeviceCredentials:
-    """Reuse credentials already held by the official Tuya integration."""
-    for entry in hass.config_entries.async_entries("tuya"):
-        listener = getattr(entry, "runtime_data", None)
-        manager = getattr(listener, "manager", None)
-        if manager is None:
-            continue
-        for device in manager.device_map.values():
-            if getattr(device, "product_id", "") != PRODUCT_ID:
-                continue
-            if not all(
-                getattr(device, attribute, None)
-                for attribute in ("uuid", "local_key", "id", "category")
-            ):
-                continue
-            return TuyaBLEDeviceCredentials(
-                device.uuid,
-                device.local_key,
-                device.id,
-                device.category,
-                device.product_id,
-                getattr(device, "name", PRODUCT_NAME),
-                None,
-                getattr(device, "product_name", PRODUCT_NAME),
-                None,
-            )
-    raise UpdateFailed("Tuya credentials for the Dimplex Sierra are unavailable")
+def _get_entry_credentials(entry: ConfigEntry) -> TuyaBLEDeviceCredentials:
+    """Use only credentials explicitly entered in this integration's own flow."""
+    try:
+        return credentials_from_data(entry.data)
+    except InvalidCredentials:
+        raise ConfigEntryAuthFailed(
+            "Enter this fireplace's BLE credentials in Dimplex Sierra BLE"
+        ) from None
 
 
 def _decode_scalar(raw: bytes, dp_type: int) -> Any:
@@ -116,6 +102,7 @@ class DimplexSierraCoordinator(DataUpdateCoordinator[DPState]):
             hass,
             _LOGGER,
             name=PRODUCT_NAME,
+            config_entry=entry,
             update_interval=timedelta(seconds=60),
         )
         self.entry = entry
@@ -125,12 +112,12 @@ class DimplexSierraCoordinator(DataUpdateCoordinator[DPState]):
         self._operation_lock = asyncio.Lock()
 
     async def async_initialize(self) -> None:
-        credentials = _get_tuya_credentials(self.hass)
+        credentials = _get_entry_credentials(self.entry)
         ble_device = bluetooth.async_ble_device_from_address(
             self.hass, self.address, connectable=True
         )
         if ble_device is None:
-            raise UpdateFailed(
+            raise ConfigEntryNotReady(
                 "The Dimplex Sierra Bluetooth advertisement is unavailable"
             )
         self.device = TuyaBLEDevice(_CredentialsManager(credentials), ble_device, None)

@@ -4,16 +4,52 @@
     "step": {
       "user": {
         "title": "Add Dimplex Sierra BLE",
-        "description": "Select the fireplace discovered over Bluetooth.",
+        "description": "Select the nearby fireplace. Discovery uses generic Tuya advertisements and does not identify the model; only select your Dimplex Sierra 48.",
+        "data": {"address": "Fireplace"}
+      },
+      "bluetooth_confirm": {
+        "title": "Confirm your Dimplex Sierra 48",
+        "description": "A nearby Tuya BLE device was discovered. Many unrelated products advertise as TY using FD50. Continue only if this is your Dimplex Sierra 48 (SIL48/X-SIL48). No entry will be added until you provide this fireplace's credentials."
+      },
+      "credentials": {
+        "title": "Enter the fireplace's BLE credentials",
+        "description": "Enter your own device details, obtained through your Tuya account. Only product ID 0fsaqmtu is supported. These values are checked for format here; BLE authentication occurs during setup. They are stored in this integration's Home Assistant config entry. Nothing is read from the official Tuya integration. Do not share these values in issues or screenshots.",
         "data": {
-          "address": "Fireplace"
+          "product_id": "Tuya product ID",
+          "uuid": "Tuya BLE UUID",
+          "device_id": "Tuya device ID",
+          "local_key": "Tuya local key"
+        }
+      },
+      "reconfigure": {
+        "title": "Replace the fireplace's BLE credentials",
+        "description": "Enter all four credential fields for this same fireplace. Stored secrets are never prefilled. The existing entry and entities will be retained; format validation is followed by a new BLE setup attempt.",
+        "data": {
+          "product_id": "Tuya product ID",
+          "uuid": "Tuya BLE UUID",
+          "device_id": "Tuya device ID",
+          "local_key": "Tuya local key"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Update the fireplace's BLE credentials",
+        "description": "This integration now requires credentials provided directly by you. Enter this fireplace's details; the existing entry and its entities will be retained. UUID, device ID and local key are private. Values are stored in this integration's Home Assistant config entry and are not imported from another integration.",
+        "data": {
+          "product_id": "Tuya product ID",
+          "uuid": "Tuya BLE UUID",
+          "device_id": "Tuya device ID",
+          "local_key": "Tuya local key"
         }
       }
     },
+    "error": {
+      "invalid_credentials": "Enter all fields exactly as supplied by Tuya. The local key must contain 16 ASCII characters, and the UUID plus device ID must fit the device's BLE pairing format.",
+      "not_supported": "Only Dimplex Sierra product ID 0fsaqmtu is supported. Do not continue with another Tuya device."
+    },
     "abort": {
       "already_configured": "The fireplace is already configured.",
-      "not_found": "No Dimplex Sierra Bluetooth advertisement was found.",
-      "not_sierra": "The discovered Bluetooth device does not match the Dimplex Sierra."
+      "not_found": "No matching Bluetooth advertisement was found. Keep the fireplace powered and within Bluetooth range.",
+      "not_sierra": "The discovered Bluetooth device does not match the supported Tuya advertisement format."
     }
   }
 }
